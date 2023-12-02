@@ -1,0 +1,236 @@
+- name: Demo
+  hosts: '{{ target | default("all") }}'
+  roles:
+    - demo
+
+- name: Demo playbook
+  # https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html
+  hosts: all
+  # strategy: ansible.builtin.free # (incompatible with run_once)
+  strategy: ansible.builtin.host_pinned # (incompatible with run_once)
+  # remote_user: vagrant
+  # become: yes
+  # serial: 100%
+  # gather_facts: False
+  # connection: local
+  ignore_errors: true
+  # any_errors_fatal: false
+  # ignore_unreachable: true
+  tags:
+    - demo
+  vars:
+    var4: playbook
+  # vars_prompt:
+  #   - name: release_version
+  #     prompt: Product release version
+  #     default: "1.0"
+  #     private: false
+
+  pre_tasks:
+    - name: Populate service facts
+      ansible.builtin.service_facts:
+
+    - name: Gather the package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Date without cache (ansible_date_time is cached and not changed)
+      ansible.builtin.command: "date"
+      register: _shell_date
+      changed_when: true
+
+    - name: Add custom_date_time to the facts
+      ansible.builtin.set_fact:
+        custom_date_time: "{{ _shell_date.stdout }}"
+        cacheable: false
+
+    - name: Add the demo dict to the facts
+      ansible.builtin.set_fact:
+        demo: "{{ demo | default({}) | ansible.builtin.combine({'demo': 'gigix'}) }}"
+        cacheable: true
+
+  tasks:
+    - name: Async (without timeout)
+      ansible.builtin.command:
+        cmd: sleep 2
+      async: 10
+      poll: 2
+      changed_when: false
+      throttle: 1
+
+    - name: Async (with timeout)
+      ansible.builtin.command:
+        cmd: sleep 2
+      async: 1
+      poll: 1
+      changed_when: false
+
+    - name: Async (no wait)
+      ansible.builtin.command:
+        cmd: sleep 10
+      async: 20
+      poll: 0
+      register: _full_async
+      changed_when: false
+
+    - name: Ping (delegate_to + tags + notify)
+      ansible.builtin.ping:
+      delegate_to: localhost
+      delegate_facts: true
+      register: ping
+      tags:
+        - ping
+      notify:
+        - handler 3
+        - Refresh inventory
+
+    - name: Who am I
+      ansible.builtin.command:
+        cmd: whoami
+      register: _whoami
+      notify:
+        - handler 3
+        - handler 2
+        - Refresh inventory
+      when: ping is success
+      changed_when: _whoami.rc != 0
+
+    - name: Ensure system is up to date
+      ansible.builtin.package:
+        name: "*"
+        state: latest # noqa package-latest
+      become: true
+      when: inventory_hostname == "localhost"
+
+    - name: Do not count this as a failure
+      ansible.builtin.command: /bin/false # noqa no-changed-when
+      # ignore_errors: true
+
+    - name: Local action (run_once) # noqa: run-once[task]
+      # local_action: command id -u
+      # local_action:
+      #   module: command
+      #   cmd: id -u
+      ansible.builtin.command:
+        cmd: id -u
+      delegate_to: localhost
+      run_once: true
+      register: __id_local
+      notify: demo handler
+      changed_when: __id_local.rc != 0
+
+    - name: "Test loop with files and include_vars"
+      ansible.builtin.include_tasks: dynamic_load_vars.yaml
+      with_fileglob:
+        - "./group_vars/dynamic_vars_file/*.yaml"
+
+    - name: Debug block
+      block:
+        - name: Print service facts from pre_tasks
+          ansible.builtin.debug:
+            msg: '{{ ansible_facts.services.get("ssh.service") }}'
+
+        - name: Print package facts from pre_tasks
+          ansible.builtin.debug:
+            msg: '{{ ansible_facts.packages.get("openssh-client") }}'
+
+        - name: Print demo facts from pre_tasks
+          ansible.builtin.debug:
+            var: ansible_facts.demo
+
+        - name: Debug register __id_local
+          ansible.builtin.debug:
+            var: __id_local
+
+        - name: Debug prompt release
+          ansible.builtin.debug:
+            msg: "Release: {{ release_version }}"
+
+        - name: Debug var1 from host_vars
+          ansible.builtin.debug:
+            var: var1
+
+        - name: Debug var2 from group_vars ungrouped
+          ansible.builtin.debug:
+            var: var2
+
+        - name: Debug var3 from group_vars all
+          ansible.builtin.debug:
+            var: var3
+
+        - name: Debug var4 from playbook
+          ansible.builtin.debug:
+            var: var4
+
+        - name: Debug secret_file variable
+          ansible.builtin.debug:
+            var: secret_file
+
+        - name: Debug secret_string variable
+          ansible.builtin.debug:
+            var: secret_string
+
+        - name: Wait full async task
+          ansible.builtin.async_status:
+            jid: "{{ _full_async.ansible_job_id }}"
+          register: _async_result
+          until: _async_result.finished
+          retries: 10
+          delay: 1
+
+        - name: Debug async_result
+          ansible.builtin.debug:
+            # var: _full_async
+            var: _async_result
+
+        - name: Failure
+          ansible.builtin.command: /bin/false
+          ignore_errors: false
+          changed_when: false
+
+      rescue:
+        - name: Print when errors
+          ansible.builtin.debug:
+            msg: "OMG an error occurs !!!"
+
+      always:
+        - name: "Flush handlers before task: Always do this"
+          ansible.builtin.meta: flush_handlers
+
+        - name: Always do this
+          ansible.builtin.debug:
+            msg: "This always executes"
+
+  post_tasks:
+    - name: Post tasks
+      ansible.builtin.debug:
+        msg: this is the end!
+
+  # - name: debug hostvars
+  #  debug:
+  #    var: hostvars
+  # - debug: var=vars
+  # - debug: msg="groups={{ groups }}"
+
+  handlers:
+    - name: Handler 1
+      ansible.builtin.debug:
+        msg: handler 1
+      listen: demo handler
+
+    - name: Handler 2
+      ansible.builtin.debug:
+        msg: handler 2
+      listen: demo handler
+
+    - name: Handler 3
+      ansible.builtin.debug:
+        msg: handler 3
+
+    - name: Handler never called
+      ansible.builtin.debug:
+        msg: handler never called
+
+    # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/meta_module.html#parameter-free_form
+    - name: Refresh inventory
+      ansible.builtin.meta: refresh_inventory
