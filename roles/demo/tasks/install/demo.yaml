@@ -1,0 +1,3 @@
+- name: Install demo
+  ansible.builtin.debug:
+    msg: demo is installed

@@ -1,0 +1,36 @@
+---
+# tasks file for demo
+
+- name: Demo
+  tags: demo
+  when:
+    - demo_run_demo | bool
+  block:
+    - name: Command from demo role
+      ansible.builtin.command:
+        cmd: echo
+      register: echo
+      notify: Systemd daemon-reload
+      tags:
+        - demo_command_from_demo_role
+      when:
+        - demo_run_command_from_demo_role | bool
+      changed_when: echo.rc != 0
+
+    - name: Hello from the demo role
+      ansible.builtin.debug:
+        msg: "Hello {{ demo_word }}!!!"
+      tags: demo_hello_from_demo_role
+      when:
+        - demo_run_hello_from_the_demo_role | bool
+
+    - name: Test condition from demo role
+      ansible.builtin.debug:
+        msg: "test condition"
+      tags: demo_testcondition_from_demo_role
+      when:
+        - demo_run_test_condition_from_demo_role | bool
+
+    - name: Install demo app
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install/demo.yaml"
+      tags: demo_install_demo_app

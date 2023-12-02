@@ -1,0 +1,16 @@
+- name: Load vars
+  ansible.builtin.include_vars:
+    file: "{{ item }}"
+    name: app
+
+- name: "Debug variables for app {{ app.app_name }}"
+  ansible.builtin.debug:
+    var: app
+  when: inventory_hostname in groups['all'][0]
+
+- name: Test loop range
+  ansible.builtin.debug:
+    msg: "loop {{ loop_item }}"
+  loop: "{{ range(0, 2, 1) | list }}"
+  loop_control:
+    loop_var: loop_item

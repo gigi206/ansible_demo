@@ -1,0 +1,13 @@
+# from galaxy
+- name: yatesr.timezone
+
+# from GitHub
+- src: https://github.com/bennojoy/nginx
+
+# from GitHub, overriding the name and specifying a specific tag
+- name: nginx_role
+  src: https://github.com/bennojoy/nginx
+  version: master
+
+# from locally cloned git repository (git+file:// requires full paths)
+# - src: git+file:///home/bennojoy/nginx

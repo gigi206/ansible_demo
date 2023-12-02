@@ -1,0 +1,7 @@
+---
+# handlers file for demo
+
+- name: Systemd daemon-reload
+  ansible.builtin.systemd:
+    # daemon_reload: true
+    daemon_reload: false
