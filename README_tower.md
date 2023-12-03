@@ -1,6 +1,7 @@
 # AWX / TOWER
 ## Documentation
-* https://docs.ansible.com/ansible-tower/latest/html/
+* [Tower](https://docs.ansible.com/ansible-tower/latest/html/)
+* [Ansible](https://ansible.readthedocs.io/projects/awx/en/latest/)
 
 ## Change password
 ```shell
