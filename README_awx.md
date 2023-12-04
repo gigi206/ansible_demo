@@ -38,14 +38,70 @@ awx -k --conf.token nBuUAFRfhjSHQxClRgrK6Hmi7UG8gS jobs list
 Or with the API key generated on https://awx.gigix/#/users/1/tokens:
 ```shell
 export TOWER_HOST=https://awx.gigix
+export TOWER_VERIFY_SSL=false
 export TOWER_OAUTH_TOKEN=nBuUAFRfhjSHQxClRgrK6Hmi7UG8gS
 ```
 
 See also variable `TOWER_USERNAME` and `TOWER_PASSWORD`.
 
+### job
+* List job with coulumns `id`, `name` and `status`:
+```shell
+awx -k job list -f human --filter "id,name,status"
+```
+
+* List only jobs with name `ansible_demo`:
+```shell
+awx job list --name ansible_demo -f human --filter "id,name,status"
+```
+
+* Print stdout of the job id 2:
+```shell
+awx job stdout 2
+```
+
+### job_template
+* Run job:
+```shell
+$ awx job_template modify foo --extra_vars guid=1234 -f human --monitor
+id  name
+=== ==========
+122 foo
+```
+
+* Modify job:
+```shell
+awx  job_template modify foo --extra_vars @./vars/my-config.yml
+```
+
 ### config
 ```shell
 awx config
+```
+
+```yaml
+TOWER_COLOR: color
+TOWER_FORMAT: format
+TOWER_HOST: host
+TOWER_PASSWORD: password
+TOWER_USERNAME: username
+TOWER_VERIFY_SSL: verify_ssl
+TOWER_VERBOSE: verbose
+TOWER_DESCRIPTION_ON: description_on
+TOWER_CERTIFICATE: certificate
+```
+
+```
+color 	        Boolean/’true’ 	        Whether to use colored output for highlighting or not.
+formaat 	    String with options (‘human’, ‘json’, ‘yaml’)/’human’ 	Output format. The “human” format is intended for humans reading output on the CLI; the “json” and “yaml” formats provide more data.
+host 	        String/‘127.0.0.1 ‘     The location of the Ansible Tower host. HTTPS is assumed as the protocol unless “http://” is explicitly provided.
+password 	    String/’‘ 	            Password to use to authenticate to Ansible Tower.
+username 	    String/’‘ 	            Username to use to authenticate to Ansible Tower.
+verify_ssl 	    Boolean/’true’ 	        Whether to force verified SSL connections.
+verbose 	    Boolean/’false’ 	    Whether to show information about requests being made.
+description_on 	Boolean/’false’ 	    Whether to show description in human-formatted output.
+certificate 	String/’‘ 	            Path to a custom certificate file that will be used throughout the command. Ignored if --insecure flag if set in command or verify_ssl is set to false
+use_token 	    Boolean/’false’ 	    Whether to use token-based authentication.
 ```
 
 ## API
