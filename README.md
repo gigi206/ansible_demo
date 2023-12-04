@@ -31,6 +31,12 @@ ansible [core 2.15.6]
   libyaml = True
 ```
 
+## Development
+* [Interact ansible with python](https://docs.ansible.com/ansible/latest/dev_guide/developing_api.html)
+* [Developing plugins](https://docs.ansible.com/ansible/latest/dev_guide/developing_plugins.html#developing-plugins)
+* [Developing dynamic inventory](https://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html#developing-inventory)
+* [Developing modules](https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general.html#developing-modules-general)
+
 ## SSH
 ### Copy key
 ```shell
