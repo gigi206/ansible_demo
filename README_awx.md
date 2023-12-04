@@ -3,6 +3,9 @@
 * [Tower](https://docs.ansible.com/ansible-tower/latest/html/)
 * [Ansible](https://ansible.readthedocs.io/projects/awx/en/latest/)
 
+## Variable precedence hierarchy
+![Ansible AWX Variable Precedence Hierarchy](https://docs.ansible.com/ansible-tower/latest/html/userguide/_images/Architecture-Tower_Variable_Precedence_Hierarchy.png)
+
 ## Tuto
 ### Change admin password
 ```shell
@@ -12,6 +15,68 @@ Password:
 Password (again):
 Password changed successfully for user 'admin'
 ```
+
+### Adding an external database
+* https://blog.stephane-robert.info/post/ansible-awx-operator-external-database/
+
+### Add callback plugins
+* https://docs.ansible.com/ansible-tower/latest/html/administration/tipsandtricks.html#using-callback-plugins-with-tower
+
+### AWX environment
+AWX automatically adds the following variables to the job environment:
+* [Environment](https://docs.ansible.com/ansible-tower/latest/html/userguide/job_templates.html#launch-a-job-template)
+
+### Job template callback url
+* *IMPORTANT*: You must adding in `Settings` > `Miscellaneous System settings` > `Remote Host Headers` the value `HTTP_X_FORWARDED_FOR`:
+```yaml
+[
+  "REMOTE_ADDR",
+  "REMOTE_HOST",
+  "HTTP_X_FORWARDED_FOR"
+]
+```
+
+* https://docs.ansible.com/ansible-tower/latest/html/userguide/job_templates.html#provisioning-callbacks
+```shell
+$ curl -L -k -i -f --data "host_config_key=cfbaae23-81c0-47f8-9a40-44493b82f06a" https://awx.gigix/api/v2/job_templates/10/callback/
+$ curl -f -H 'Content-Type: application/json' -XPOST \
+                 -d '{"host_config_key": "5a8ec154832b780b9bdef1061764ae5a", "extra_vars": "{\"foo\": \"bar\"}"}' \
+                 http://<TOWER_SERVER_NAME>/api/v2/job_templates/1/callback
+```
+
+### Use a ssh bastion to a host
+Inside the host or group, add to vars where `192.168.121.94` is the ip of the host bastion:
+```yaml
+ansible_user: vagrant
+ansible_ssh_common_args: -o StrictHostKeyChecking=no -o ProxyCommand="ssh -p 22 -o StrictHostKeyChecking=no -o 'ForwardAgent yes' -W %h:%p -q vagrant@192.168.121.94"
+```
+
+* [Jumphost with a custom credential](https://github.com/IBM/IBMDeveloper-recipes/blob/main/multiple-jumphosts-in-ansible-tower-part-1/index.md)
+  * don't forget to add to your host: `ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="ssh -W %h:%p -p {{ jh_ssh_port }} {{ jh_ssh_user }}@{{ jh_ip }} -i $JH_SSH_PRIVATE_KEY -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"'`
+  * [Multiple jumphost](https://github.com/IBM/IBMDeveloper-recipes/blob/main/multiple-jumphosts-in-ansible-tower-part-1/index.md#4-configuring-host-variables)
+
+### Instance type
+* https://blog.stephane-robert.info/post/ansible-awx-add-isolated-execution-node/
+* https://github.com/ansible/awx/blob/devel/docs/execution_nodes.md
+```
+                                                     AWX TASK POD
+                                                   ┌──────────────┐
+                                                   │              │
+                                                   │ ┌──────────┐ │
+┌─────────────────┐   ┌─────────────────┐          │ │ awx-task │ │
+│execution node 2 ├──►│     hop node    │◄────┐    │ ├──────────┤ │
+└─────────────────┘   ├─────────────────┤     ├────┼─┤ awx-ee   │ │
+                      │ execution node 1│◄────┘    │ └──────────┘ │
+                      └─────────────────┘ Receptor │              |
+                                            TCP    └──────────────┘
+                                           Peers
+```
+
+| instance name    | listener_port    | peers_from_control_nodes | peers        |
+| :--------------- | :--------------- | :----------------------- | :----------- |
+| execution node 1 | 27199 	          | true                     | []           |
+| hop node         | 27199            | true                     | []           |
+| execution node 2 | null             | false                    | ["hop node"] |
 
 ## Cli
 * [Cli](https://docs.ansible.com/ansible-tower/latest/html/towercli/index.html)

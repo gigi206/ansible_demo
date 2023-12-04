@@ -79,6 +79,12 @@ Host private-server-*.example.com
    ProxyJump bastion
 ```
 
+* Or you can add to the inventory these lines to use a ssh bastion:
+```yaml
+ansible_user: vagrant
+ansible_ssh_common_args: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="ssh -p 22 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p -q vagrant@bastion"
+```
+
 ## Inventory
 * [Documentation](https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html)
 * [Building inventory](https://docs.ansible.com/ansible/latest/getting_started/get_started_inventory.html)
