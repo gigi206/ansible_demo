@@ -50,6 +50,15 @@
         cacheable: true
 
   tasks:
+    - name: Loop with dynamic condition
+      ansible.builtin.command:
+        cmd: "{{ item.cmd }}"
+      when: item.when
+      changed_when: echo.stdout != "1000"
+      loop:
+      - {cmd: "id -u", when: true}
+      - {cmd: "id -a", when: false}
+
     - name: Async (without timeout)
       ansible.builtin.command:
         cmd: sleep 2
