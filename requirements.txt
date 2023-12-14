@@ -2,3 +2,4 @@ ansible       # core
 ansible-base  # development with the Ansible API (or ansible-galaxy collection install ansible.builtin to only install builtin)
 ansible-lint  # linter
 awxkit        # ineteract with awx api
+hvac          # Hashicorp Vault
