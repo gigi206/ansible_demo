@@ -1,27 +1,26 @@
 <!-- TOC -->
 
-- [AWX / TOWER](#awx--tower)
-    - [Documentation](#documentation)
-    - [Variable precedence hierarchy](#variable-precedence-hierarchy)
-    - [Tuto](#tuto)
-        - [Change admin password](#change-admin-password)
-        - [Adding an external database](#adding-an-external-database)
-        - [Add callback plugins](#add-callback-plugins)
-        - [AWX environment](#awx-environment)
-        - [Job template callback url](#job-template-callback-url)
-        - [Use a ssh bastion to a host](#use-a-ssh-bastion-to-a-host)
-        - [Instance type](#instance-type)
-    - [Cli](#cli)
-        - [Install](#install)
-        - [login](#login)
-        - [job](#job)
-        - [job_template](#job_template)
-        - [config](#config)
-    - [API](#api)
-        - [References](#references)
-        - [curl](#curl)
-        - [Ansible](#ansible)
-        - [awxkit](#awxkit)
+- [Documentation](#documentation)
+- [Variable precedence hierarchy](#variable-precedence-hierarchy)
+- [Tuto](#tuto)
+    - [Change admin password](#change-admin-password)
+    - [Adding an external database](#adding-an-external-database)
+    - [Add callback plugins](#add-callback-plugins)
+    - [AWX environment](#awx-environment)
+    - [Job template callback url](#job-template-callback-url)
+    - [Use a ssh bastion to a host](#use-a-ssh-bastion-to-a-host)
+    - [Instance type](#instance-type)
+- [Cli](#cli)
+    - [Install](#install)
+    - [login](#login)
+    - [job](#job)
+    - [job_template](#job_template)
+    - [config](#config)
+- [API](#api)
+    - [References](#references)
+    - [curl](#curl)
+    - [Ansible](#ansible)
+    - [awxkit](#awxkit)
 
 <!-- /TOC -->
 
@@ -64,11 +63,13 @@ AWX automatically adds the following variables to the job environment:
 
 * https://docs.ansible.com/ansible-tower/latest/html/userguide/job_templates.html#provisioning-callbacks
 ```shell
-$ curl -L -k -i -f --data "host_config_key=cfbaae23-81c0-47f8-9a40-44493b82f06a" https://awx.gigix/api/v2/job_templates/10/callback/
-$ curl -f -H 'Content-Type: application/json' -XPOST \
+$ curl -L -k -i --data "host_config_key=cfbaae23-81c0-47f8-9a40-44493b82f06a" https://awx.gigix/api/v2/job_templates/10/callback/
+$ curl -kiH 'Content-Type: application/json' -XPOST \
                  -d '{"host_config_key": "5a8ec154832b780b9bdef1061764ae5a", "extra_vars": "{\"foo\": \"bar\"}"}' \
                  http://<TOWER_SERVER_NAME>/api/v2/job_templates/1/callback
 ```
+
+Cf [issue here](https://github.com/ansible/awx/issues/14707).
 
 ### Use a ssh bastion to a host
 Inside the host or group, add to vars where `192.168.121.94` is the ip of the host bastion:
