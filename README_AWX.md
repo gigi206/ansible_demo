@@ -2,6 +2,7 @@
 
 - [Documentation](#documentation)
 - [Variable precedence hierarchy](#variable-precedence-hierarchy)
+- [Backup / restore](#backup--restore)
 - [Tuto](#tuto)
     - [Change admin password](#change-admin-password)
     - [Adding an external database](#adding-an-external-database)
@@ -30,6 +31,28 @@
 
 ## Variable precedence hierarchy
 ![Ansible AWX Variable Precedence Hierarchy](https://docs.ansible.com/ansible-tower/latest/html/userguide/_images/Architecture-Tower_Variable_Precedence_Hierarchy.png)
+
+## Backup / restore
+```yaml
+# https://github.com/ansible/awx-operator/blob/devel/roles/backup/README.md
+# https://github.com/ansible/awx-operator/blob/devel/roles/restore/README.md
+apiVersion: awx.ansible.com/v1beta1
+kind: AWXBackup
+metadata:
+  name: awx-backup
+  namespace: awx-operator
+spec:
+  backup_resource_requirements:
+    limits:
+      cpu: 1000m
+      memory: 4096Mi
+    requests:
+      cpu: 25m
+      memory: 32Mi
+  deployment_name: awx-backup
+  backup_storage_class: longhorn
+  backup_storage_requirements: 3Gi
+```
 
 ## Tuto
 ### Change admin password
