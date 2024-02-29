@@ -390,7 +390,7 @@ include_tasks
 
 ## Variables
 * [Variables precedence](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_variables.html#understanding-variable-precedence)
-* [Special variables](https://docs.ansible.com/ansible/latest/reference_appendices/special_variables.html
+* [Special variables](https://docs.ansible.com/ansible/latest/reference_appendices/special_variables.html)
 * [Xavki Youtube](https://www.youtube.com/watch?v=UuiRDRIJ-sM&list=PLn6POgpklwWoCpLKOSw3mXCqbRocnhrh-&index=10)
 
 ## Loop
