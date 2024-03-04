@@ -387,6 +387,59 @@ include_tasks
 
 ## Collections
 * [Documentation](https://docs.ansible.com/ansible/latest/collections_guide/collections_using_playbooks.html)
+* [Comparing standalone roles to collection roles](https://docs.ansible.com/ansible/latest/dev_guide/migrating_roles.html#comparing-standalone-roles-to-collection-roles)
+
+Structure of an ansible collection:
+```
+mynamespace/
+└── mycollection/
+  ├── docs/
+  ├── galaxy.yml
+  ├── plugins/
+  │   ├── modules/
+  │   │   └── module1.py
+  │   ├── inventory/
+  │   └── .../
+  ├── README.md
+  ├── roles/
+  │   ├── role1/
+  │   ├── role2/
+  │   └── .../
+  ├── playbooks/
+  │   ├── files/
+  │   ├── vars/
+  │   ├── templates/
+  │   └── tasks/
+  └── tests/
+  ```
+
+* [Using a playbook from a collection](https://docs.ansible.com/ansible/latest/collections_guide/collections_using_playbooks.html#using-a-playbook-from-a-collection)
+
+```shell
+ansible-playbook my_namespace.my_collection.playbook1 -i ./myinventory
+```
+
+Call a module and a role from an ansible collection:
+```yaml
+tasks:
+  - name: Test my module
+    gigix.demo.mymodule:
+      number: 11
+
+  roles:
+  - gigix.demo.myrole
+```
+
+But if you use references to the same collection and namespace, you can simplify the code without specifying the `collection.namespace` (`gigix.demo`) like that:
+```yaml
+tasks:
+  - name: Test my module
+    mymodule:
+      number: 11
+
+  roles:
+  - myrole
+```
 
 ## Variables
 * [Variables precedence](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_variables.html#understanding-variable-precedence)
