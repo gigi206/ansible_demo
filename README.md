@@ -1096,17 +1096,48 @@ ansible all -m reboot -a "reboot_timeout=3600"
 ansible-doc -t module ansible.builtin.include_vars
 ```
 
+* Include vars file from a role and merge all. The last file override the others:
 ```yaml
-- name: Load a variable file based on the OS type, or a default if not found. Using free-form to specify the file.
+- name: Merge all file vars found
+  ansible.builtin.include_vars: "{{ item }}"
+  loop:
+    # - default.yml # use main.yml instead (this is the default file)
+    - "{{ ansible_os_family }}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_distribution }}{{ ansible_distribution_version }}.yml"
+  when:
+    - ([path, item] | path_join) in query("ansible.builtin.fileglob", "{}/*.yml".format(path))
+  vars:
+    path: "{{ [role_path, 'vars'] | path_join }}"
+```
+
+* Include vars file from a role and stop at the 1st file found (don't continue on other files):
+```yaml
+- name: Include vars with first_found
   ansible.builtin.include_vars: "{{ lookup('ansible.builtin.first_found', params) }}"
   vars:
     params:
       files:
-        - '{{ansible_distribution}}.yaml'
-        - '{{ansible_os_family}}.yaml'
-        - default.yaml
+        - "{{ ansible_distribution }}{{ ansible_distribution_version }}.yaml"
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}.yml"
+        - default.yml
       paths:
-        - 'vars'
+        - "{{ [role_path, 'vars'] | path_join }}"
+```
+
+* Or with nested directories structure:
+```yaml
+- name: Merge all file vars found
+  ansible.builtin.include_vars: "{{ item }}"
+  loop:
+    - "{{ ansible_distribution }}/main.yml"
+    - "{{ ansible_distribution }}/{{ ansible_distribution_major_version }}/main.yml"
+    - "{{ ansible_distribution }}/{{ ansible_distribution_major_version }}/{{ ansible_distribution_version }}.yml"
+  when:
+    - ([path, item] | path_join) in query("community.general.filetree", path) | selectattr("state", "in", "file") | map(attribute="src") | list
+  vars:
+    path: "{{ [role_path, 'vars'] | path_join }}"
 ```
 
 ### authorized_key
