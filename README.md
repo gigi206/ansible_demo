@@ -31,6 +31,8 @@
     - [Roles](#roles)
     - [Collections](#collections)
     - [Variables](#variables)
+        - [Special variables](#special-variables)
+            - [omit](#omit)
     - [Loop](#loop)
     - [Query / Lookup](#query--lookup)
     - [Conditions](#conditions)
@@ -446,6 +448,32 @@ tasks:
 * [Special variables](https://docs.ansible.com/ansible/latest/reference_appendices/special_variables.html)
 * [Variables inside a jinja template](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/template_module.html#synopsis)
 * [Xavki Youtube](https://www.youtube.com/watch?v=UuiRDRIJ-sM&list=PLn6POgpklwWoCpLKOSw3mXCqbRocnhrh-&index=10)
+
+### Special variables
+#### omit
+* [Documentation](https://docs.ansible.com/ansible/latest/playbook_guide/complex_data_manipulation.html#omit-elements-from-a-list)
+
+Examples:
+```yaml
+id: "{{ (openstack_networks | default({})).id | default(omit) }}"
+```
+
+```yaml
+id: "{{ omit if openstack_networks.id is not defined else openstack_networks.id }}"
+```
+
+```yaml
+- name: Touch files with an optional mode
+  ansible.builtin.file:
+    dest: "{{ item.path }}"
+    state: touch
+    mode: "{{ item.mode | default(omit) }}"
+  loop:
+    - path: /tmp/foo
+    - path: /tmp/bar
+    - path: /tmp/baz
+      mode: "0444"
+```
 
 ## Loop
 * [Documentation](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_loops.html)
