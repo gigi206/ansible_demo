@@ -36,7 +36,7 @@
     - [Conditions](#conditions)
     - [Error handling in playbooks](#error-handling-in-playbooks)
     - [Block](#block)
-- [Timeout](#timeout)
+    - [Timeout](#timeout)
     - [Strategy](#strategy)
     - [Filters](#filters)
     - [Custom module](#custom-module)
@@ -716,7 +716,7 @@ ignore_unreachable: true
         msg: "This always executes"
 ```
 
-# Timeout
+## Timeout
 * [Documentation](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_async.html)
 
 ```yaml
