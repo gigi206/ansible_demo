@@ -110,6 +110,7 @@ ansible [core 2.15.6]
 * [Developing modules](https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general.html#developing-modules-general)
 
 ## SSH
+
 ### Copy key
 ```shell
 ssh-copy-id -i /path/ssh/private_key user@server
@@ -238,6 +239,7 @@ ansible localhost -m ping -e 'ansible_python_interpreter=/usr/bin/python3'
 ```
 
 ## Cli
+
 ### ansible-inventory
 * [Documentation](https://docs.ansible.com/ansible/latest/cli/ansible-inventory.html):
 ```shell
@@ -391,7 +393,7 @@ include_tasks
 * [Documentation](https://docs.ansible.com/ansible/latest/collections_guide/collections_using_playbooks.html)
 * [Comparing standalone roles to collection roles](https://docs.ansible.com/ansible/latest/dev_guide/migrating_roles.html#comparing-standalone-roles-to-collection-roles)
 
-Structure of an ansible collection:
+* Structure of an Ansible collection:
 ```
 mynamespace/
 └── mycollection/
@@ -414,6 +416,24 @@ mynamespace/
   │   └── tasks/
   └── tests/
   ```
+
+* To create a collection with roles:
+```shell
+$ mkdir collections/ansible_collections/
+$ cd collections/ansible_collections/
+$ ansible-galaxy collection init gigix.demo
+$ cd gigix/demo
+# https://docs.ansible.com/ansible/latest/dev_guide/developing_collections_structure.html#playbooks-directory
+$ mkdir playbooks/{files,vars,templates,tasks}
+$ cd roles
+$ ansible-galaxy init test
+```
+
+* Now you need to configure the collection PATH with one of them:
+  * environment variable: `ANSIBLE_COLLECTIONS_PATH=collections:/usr/share/ansible/collections` 
+  * configuration file `ansible.cfg`: `collections_path=collections:/usr/share/ansible/collections`
+
+https://docs.ansible.com/ansible/latest/reference_appendices/config.html#envvar-ANSIBLE_COLLECTIONS_PATH
 
 * [Using a playbook from a collection](https://docs.ansible.com/ansible/latest/collections_guide/collections_using_playbooks.html#using-a-playbook-from-a-collection)
 
@@ -450,6 +470,7 @@ tasks:
 * [Xavki Youtube](https://www.youtube.com/watch?v=UuiRDRIJ-sM&list=PLn6POgpklwWoCpLKOSw3mXCqbRocnhrh-&index=10)
 
 ### Special variables
+
 #### omit
 * [Documentation](https://docs.ansible.com/ansible/latest/playbook_guide/complex_data_manipulation.html#omit-elements-from-a-list)
 
@@ -905,6 +926,7 @@ ansible-doc -t module ansible.builtin.user
 ```shell
 ansible all -m user -a "'name=foo password={{ \'password\' | password_hash(\'sha512\') }}'"
 ```
+
 ### group
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/group_module.html
 
