@@ -2,6 +2,12 @@
   hosts: '{{ target | default("all") }}'
   roles:
     - demo
+    - role: myapp
+      vars:
+        myapp_myvar: test from role
+    - role: gigix.demo.myapp
+      vars:
+        myapp_myvar: test from collection
 
 - name: Demo playbook
   # https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html
