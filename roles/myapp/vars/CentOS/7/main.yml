@@ -1,0 +1,7 @@
+---
+myapp_myvar: CentOS7
+packages:
+  - openssl
+  # - openssl-lib.x86_64
+  # - openssl-lib.i686
+  # - qt5-qtbase

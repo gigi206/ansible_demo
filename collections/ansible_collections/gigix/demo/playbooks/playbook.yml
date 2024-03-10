@@ -1,0 +1,17 @@
+---
+- name: MyAPP
+  hosts: "{{ target | default('all') }}"
+  roles:
+    # - myapp
+    - role: myapp
+      vars:
+        myapp_myvar: test from collection
+
+  pre_tasks: []
+
+  tasks:
+  #   - name: xxx
+  #     block:
+  #       - name: Print service facts from pre_tasks
+
+  post_tasks: []
