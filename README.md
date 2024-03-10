@@ -429,11 +429,9 @@ $ cd roles
 $ ansible-galaxy init test
 ```
 
-* Now you need to configure the collection PATH with one of them:
+* Now you need to configure the collection PATH with one of them (cf [documentation](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#envvar-ANSIBLE_COLLECTIONS_PATH)):
   * environment variable: `ANSIBLE_COLLECTIONS_PATH=collections:/usr/share/ansible/collections` 
   * configuration file `ansible.cfg`: `collections_path=collections:/usr/share/ansible/collections`
-
-https://docs.ansible.com/ansible/latest/reference_appendices/config.html#envvar-ANSIBLE_COLLECTIONS_PATH
 
 * [Using a playbook from a collection](https://docs.ansible.com/ansible/latest/collections_guide/collections_using_playbooks.html#using-a-playbook-from-a-collection)
 
@@ -441,7 +439,9 @@ https://docs.ansible.com/ansible/latest/reference_appendices/config.html#envvar-
 ansible-playbook my_namespace.my_collection.playbook1 -i ./myinventory
 ```
 
-Call a module and a role from an ansible collection:
+In this demo you can try `ansible-playbook -i inventory.yaml -c local gigix.demo.playbook` to call the playbook (cf [gigix.demo.playbook](./collections/ansible_collections/gigix/demo/playbooks/playbook.yml)).
+
+* Call a module and a role from an ansible collection:
 ```yaml
 tasks:
   - name: Test my module
