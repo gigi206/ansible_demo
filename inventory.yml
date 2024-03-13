@@ -1,7 +1,10 @@
 all:
-ungrouped:
   hosts:
     localhost:
-      ansible_host: 127.0.0.1
+      # https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html#connecting-to-hosts-behavioral-inventory-parameters
+      # ansible_host: 127.0.0.1
+      # ansible_port: 22
+      # ansible_user: root
       ansible_connection: local
       ansible_python_interpreter: /usr/bin/env python3
+ungrouped:
