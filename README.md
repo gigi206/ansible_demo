@@ -26,6 +26,8 @@
         - [ansible](#ansible)
         - [ansible-galaxy](#ansible-galaxy)
         - [ansible-vault](#ansible-vault)
+            - [ansible-vault simple](#ansible-vault-simple)
+            - [ansible-vault multi-password](#ansible-vault-multi-password)
         - [ansible-lint](#ansible-lint)
     - [Import / Include](#import--include)
     - [Roles](#roles)
@@ -349,10 +351,10 @@ ansible-galaxy install --roles-path roles -r requirements.yml
 ```
 
 ### ansible-vault
+#### ansible-vault simple
 * [Cli](https://docs.ansible.com/ansible/latest/cli/ansible-vault.html)
 * [Vault guide](https://docs.ansible.com/ansible/latest/vault_guide/index.html)
 * [Youtube Xavki](https://www.youtube.com/watch?v=ceDcVPuN3HE&list=PLn6POgpklwWoCpLKOSw3mXCqbRocnhrh-&index=60)
-* [Youtube Xavki multipassword](https://www.youtube.com/watch?v=m0_2yg4K14w&list=PLn6POgpklwWoCpLKOSw3mXCqbRocnhrh-&index=62)
 
 * Ask password:
 ```shell
@@ -376,6 +378,20 @@ $ for file in $(find . -type f -name "*.yml" -not -path "./env/*" -exec egrep -E
 ./group_vars/all/vault.yml
 $ ansible-vault view ./group_vars/all/vault.yml
 secret: This is very secret!
+```
+
+#### ansible-vault multi-password
+* [Youtube Xavki multipassword](https://www.youtube.com/watch?v=m0_2yg4K14w&list=PLn6POgpklwWoCpLKOSw3mXCqbRocnhrh-&index=62)
+ansible-vault create --vault-id prod@prompt prod-secrets.yml
+
+* Creation d'un fichier sécurisé `prod-secrets.yml` avec l'id `prod` en demandant le password `@prompt`:
+```shell
+ansible-vault create --vault-id prod@prompt prod-secrets.yml
+```
+
+* Encryption du fichier `prod-secrets.yml` en utilisant le fichier de password `mypasswd_file.txt`:
+```shell
+ansible-vault create --vault-id prod@mypasswd_file.txt prod-secrets.yml
 ```
 
 ### ansible-lint
