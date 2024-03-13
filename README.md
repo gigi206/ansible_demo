@@ -371,7 +371,7 @@ export ANSIBLE_VAULT_PASSWORD_FILE=$(realpath ./vault_password)
 
 * How to find var files that contain a specific secret ?
 ```shell
-VAR_SEARCH="secret"
+$ VAR_SEARCH="secret"
 $ for file in $(find . -type f -name "*.yml" -not -path "./env/*" -exec egrep -El '^\$ANSIBLE_VAULT;' {} \;); do ansible-vault view "$file" | egrep -w "^${VAR_SEARCH}:" >/dev/null && echo "$file"; done
 ./group_vars/all/vault.yml
 $ ansible-vault view ./group_vars/all/vault.yml
@@ -469,7 +469,7 @@ $ ansible-galaxy init test
 ```
 
 * Now you need to configure the collection PATH with one of them (cf [documentation](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#envvar-ANSIBLE_COLLECTIONS_PATH)):
-  * environment variable: `ANSIBLE_COLLECTIONS_PATH=collections:/usr/share/ansible/collections` 
+  * environment variable: `ANSIBLE_COLLECTIONS_PATH=collections:/usr/share/ansible/collections`
   * configuration file `ansible.cfg`: `collections_path=collections:/usr/share/ansible/collections`
 
 * [Using a playbook from a collection](https://docs.ansible.com/ansible/latest/collections_guide/collections_using_playbooks.html#using-a-playbook-from-a-collection)
