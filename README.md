@@ -381,7 +381,8 @@ secret: This is very secret!
 * [Documentation](https://ansible.readthedocs.io/projects/lint/)
 
 ## Import / Include
-* [Comparing include (dynamic) vs import (static)](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse.html#comparing-includes-and-imports-dynamic-and-static-reuse)
+* Compare:
+  * [Comparing include (dynamic) vs import (static)](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse.html#comparing-includes-and-imports-dynamic-and-static-reuse)
   * [Include vs Import](https://www.ansiblejunky.com/blog/ansible-101-include-vs-import/)
 
 * For static reuse, add an `import_*` task in the tasks section of a play:
