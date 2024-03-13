@@ -41,6 +41,7 @@
     - [Timeout](#timeout)
     - [Strategy](#strategy)
     - [Filters](#filters)
+        - [community.general.groupby_as_dict](#communitygeneralgroupby_as_dict)
     - [Custom module](#custom-module)
     - [Modules](#modules)
         - [ansible.builtin.ping](#ansiblebuiltinping)
@@ -831,6 +832,17 @@ ansible-doc -t strategy -l
 ## Filters
 * [Documentation](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_filters.html)
 * [List of filters](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/#filter-plugins)
+
+### community.general.groupby_as_dict
+```yaml
+- name: Output mount facts grouped by device name
+  ansible.builtin.debug:
+    var: ansible_facts.mounts | community.general.groupby_as_dict('device')
+
+- name: Output mount facts grouped by mount point
+  ansible.builtin.debug:
+    var: ansible_facts.mounts | community.general.groupby_as_dict('mount')
+```
 
 ## Custom module
 * https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general.html
