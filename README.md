@@ -324,7 +324,7 @@ $ ansible -i "127.0.0.1," all -m shell -a "getent passwd | egrep -w root"
 ```
 
 ### ansible-galaxy
-* [Cli][https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html]
+* [Cli](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html)
 * [Galaxy](https://galaxy.ansible.com/ui/)
 * [User Guide](https://docs.ansible.com/ansible/latest/galaxy/user_guide.html)
 
