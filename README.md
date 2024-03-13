@@ -69,6 +69,7 @@
         - [ansible.builtin.fail](#ansiblebuiltinfail)
         - [ansible.builtin.assert](#ansiblebuiltinassert)
         - [ansible.builtin.meta](#ansiblebuiltinmeta)
+        - [ansible.builtin.group_by](#ansiblebuiltingroup_by)
     - [Testing](#testing)
         - [Molecule](#molecule)
         - [ansible-test](#ansible-test)
@@ -1307,4 +1308,28 @@ ansible-doc -t module ansible.builtin.meta
 
 ```shell
 ansible all -m ansible.builtin.meta -a "refresh_inventory"
+```
+
+### ansible.builtin.group_by
+* https://docs.ansible.com/ansible/latest/collections/ansible/builtin/group_by_module.html
+
+```yaml
+- name: Group_by playbook
+  hosts: all
+  tasks:
+    - name: Create a group of all hosts by operating system
+      ansible.builtin.group_by:
+        key: "{{ ansible_distribution }}-{{ ansible_distribution_version }}"
+
+- name: CentOS-6.2
+  hosts: CentOS-6.2
+  tasks:
+    - name: Ping all CentOS 6.2 hosts
+      ansible.builtin.ping:
+
+- name: CentOS-6.3
+  hosts: CentOS-6.3
+  tasks:
+    - name: Ping all CentOS 6.3 hosts
+      ansible.builtin.ping:
 ```
