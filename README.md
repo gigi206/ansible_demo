@@ -321,7 +321,7 @@ ansible-doc -t callback ansible.posix.json
 
 * Use `ANSIBLE_STDOUT_CALLBACK` env var to change the callback for the playbook:
 ```shell
-ANSIBLE_STDOUT_CALLBACK=ansible.posix.json ansible-playbook playbook.yaml
+ANSIBLE_STDOUT_CALLBACK=ansible.posix.json ansible-playbook playbook.yml
 ```
 
 ### ansible
@@ -345,7 +345,7 @@ ansible-galaxy init myrole
 
 * [Requirements](https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#installing-multiple-roles-from-a-file):
 ```shell
-ansible-galaxy install --roles-path roles -r requirements.yaml
+ansible-galaxy install --roles-path roles -r requirements.yml
 ```
 
 ### ansible-vault
@@ -372,9 +372,9 @@ export ANSIBLE_VAULT_PASSWORD_FILE=$(realpath ./vault_password)
 * How to find var files that contain a specific secret ?
 ```shell
 VAR_SEARCH="secret"
-$ for file in $(find . -type f -name "*.yaml" -not -path "./env/*" -exec egrep -El '^\$ANSIBLE_VAULT;' {} \;); do ansible-vault view "$file" | egrep -w "^${VAR_SEARCH}:" >/dev/null && echo "$file"; done
-./group_vars/all/vault.yaml
-$ ansible-vault view ./group_vars/all/vault.yaml
+$ for file in $(find . -type f -name "*.yml" -not -path "./env/*" -exec egrep -El '^\$ANSIBLE_VAULT;' {} \;); do ansible-vault view "$file" | egrep -w "^${VAR_SEARCH}:" >/dev/null && echo "$file"; done
+./group_vars/all/vault.yml
+$ ansible-vault view ./group_vars/all/vault.yml
 secret: This is very secret!
 ```
 
@@ -478,7 +478,7 @@ $ ansible-galaxy init test
 ansible-playbook my_namespace.my_collection.playbook1 -i ./myinventory
 ```
 
-In this demo you can try `ansible-playbook -i inventory.yaml -c local gigix.demo.playbook` to call the playbook (cf [gigix.demo.playbook](./collections/ansible_collections/gigix/demo/playbooks/playbook.yml)).
+In this demo you can try `ansible-playbook -i inventory.yml -c local gigix.demo.playbook` to call the playbook (cf [gigix.demo.playbook](./collections/ansible_collections/gigix/demo/playbooks/playbook.yml)).
 
 * Call a module and a role from an ansible collection:
 ```yaml
@@ -1190,7 +1190,7 @@ ansible-doc -t module ansible.builtin.include_vars
   vars:
     params:
       files:
-        - "{{ ansible_distribution }}{{ ansible_distribution_version }}.yaml"
+        - "{{ ansible_distribution }}{{ ansible_distribution_version }}.yml"
         - "{{ ansible_distribution }}.yml"
         - "{{ ansible_os_family }}.yml"
         - default.yml

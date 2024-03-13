@@ -20,5 +20,5 @@ context.CLIARGS = ImmutableDict(tags={}, listtags=False, listtasks=False, listho
                                 become_method='sudo', become_user='root', verbosity=True, check=False, start_at_task=None)
 inventory = InventoryManager(loader=loader, sources='../hosts')
 variable_manager = VariableManager(loader=loader, inventory=inventory)
-pbex = PlaybookExecutor(playbooks=['../playbook.yaml'], inventory=inventory, variable_manager=variable_manager, loader=loader, passwords={})
+pbex = PlaybookExecutor(playbooks=['../playbook.yml'], inventory=inventory, variable_manager=variable_manager, loader=loader, passwords={})
 results = pbex.run()

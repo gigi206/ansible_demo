@@ -1,5 +1,5 @@
 # ansible-galaxy collection list | egrep community.hashi_vault
-# ansible-galaxy install -r requirements_vault.yaml or ansible-galaxy collection install community.hashi_vault
+# ansible-galaxy install -r requirements_vault.yml or ansible-galaxy collection install community.hashi_vault
 - name: Hashicorp Vault
   hosts: '{{ target | default("all") }}'
 

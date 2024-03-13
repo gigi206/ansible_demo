@@ -5,7 +5,7 @@
   tags: MyAPP
   block:
     # - name: Install demo app
-    #   ansible.builtin.include_tasks: "{{ role_path }}/tasks/install/demo.yaml"
+    #   ansible.builtin.include_tasks: "{{ role_path }}/tasks/install/demo.yml"
     #   tags: demo_install_demo_app
 
 

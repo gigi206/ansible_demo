@@ -129,9 +129,9 @@
       changed_when: __id_local.rc != 0
 
     - name: "Test loop with files and include_vars"
-      ansible.builtin.include_tasks: dynamic_load_vars.yaml
+      ansible.builtin.include_tasks: dynamic_load_vars.yml
       with_fileglob:
-        - "./group_vars/dynamic_vars_file/*.yaml"
+        - "./group_vars/dynamic_vars_file/*.yml"
 
     - name: Debug block
       block:
