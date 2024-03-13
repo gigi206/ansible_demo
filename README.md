@@ -373,18 +373,46 @@ secret: This is very secret!
 
 ## Import / Include
 * [Comparing include (dynamic) vs import (static)](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse.html#comparing-includes-and-imports-dynamic-and-static-reuse)
+  * [Include vs Import](https://www.ansiblejunky.com/blog/ansible-101-include-vs-import/)
 
+* For static reuse, add an `import_*` task in the tasks section of a play:
+  * [import_playbook](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/import_playbook_module.html)
+  * [import_role](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/import_role_module.html#import-role-module)
+  * [import_tasks](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/import_tasks_module.html#import-tasks-module)
+
+* For dynamic reuse, add an `include_*` task in the tasks section of a play:
+  * [include_role](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/include_role_module.html#include-role-module)
+  * [include_tasks](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/include_tasks_module.html#include-tasks-module)
+  * [include_vars](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/include_vars_module.html#include-vars-module)
+
+If you really want include_role to apply tags to all tasks inside the role, then you need to use the `apply` option:
+```yaml
+- hosts: localhost
+  gather_facts: no
+
+  tasks:
+    - name: Apply tags to only this task (include_role)
+      include_role:
+        name: example
+        apply:
+          tags:
+            - install
+      tags:
+        - install
+
+    - debug:
+        msg: "include_role completed"
+      tags:
+        - install
+
+    - name: Apply tags to tasks inside the role (import_role)
+      import_role:
+        name: example
+      tags:
+        - install
 ```
-import
-import_playbook
-import_role
-import_tasks
-include
-include_vars
-include_playbook
-include_role
-include_tasks
-```
+
+And run `ansible-playbook test.yml --tags=install`.
 
 ## Roles
 * [Documentation](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse_roles.html)
