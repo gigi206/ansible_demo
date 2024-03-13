@@ -43,31 +43,39 @@
     - [Filters](#filters)
     - [Custom module](#custom-module)
     - [Modules](#modules)
-        - [ping](#ping)
-        - [raw](#raw)
-        - [shell](#shell)
-        - [async_status](#async_status)
-        - [setup](#setup)
-        - [gateher_facts](#gateher_facts)
-        - [debug](#debug)
-        - [service](#service)
-        - [user](#user)
-        - [group](#group)
-        - [file](#file)
-        - [stat](#stat)
-        - [lineinfile](#lineinfile)
-        - [blockinfile](#blockinfile)
-        - [template](#template)
-        - [synchronize](#synchronize)
-        - [copy](#copy)
-        - [fetch](#fetch)
-        - [reboot](#reboot)
-        - [include_vars](#include_vars)
-        - [authorized_key](#authorized_key)
-        - [expect](#expect)
-        - [fail](#fail)
-        - [assert](#assert)
-        - [meta](#meta)
+        - [ansible.builtin.ping](#ansiblebuiltinping)
+        - [ansible.builtin.raw](#ansiblebuiltinraw)
+        - [ansible.builtin.shell](#ansiblebuiltinshell)
+        - [ansible.builtin.async_status](#ansiblebuiltinasync_status)
+        - [module ansible.builtin.setup](#module-ansiblebuiltinsetup)
+        - [ansible.builtin.gather_facts](#ansiblebuiltingather_facts)
+        - [ansible.builtin.debug](#ansiblebuiltindebug)
+        - [ansible.builtin.service](#ansiblebuiltinservice)
+        - [ansible.builtin.user](#ansiblebuiltinuser)
+        - [ansible.builtin.group](#ansiblebuiltingroup)
+        - [ansible.builtin.file](#ansiblebuiltinfile)
+        - [module ansible.builtin.stat](#module-ansiblebuiltinstat)
+        - [ansible.builtin.lineinfile](#ansiblebuiltinlineinfile)
+        - [ansible.builtin.blockinfile](#ansiblebuiltinblockinfile)
+        - [module ansible.builtin.template](#module-ansiblebuiltintemplate)
+        - [ansible.posix.synchronize](#ansibleposixsynchronize)
+        - [ansible.builtin.copy](#ansiblebuiltincopy)
+        - [ansible.builtin.fetch](#ansiblebuiltinfetch)
+        - [ansible.builtin.reboot](#ansiblebuiltinreboot)
+        - [ansible.builtin.include_vars](#ansiblebuiltininclude_vars)
+        - [ansible.posix.authorized_key](#ansibleposixauthorized_key)
+        - [ansible.builtin.expect](#ansiblebuiltinexpect)
+        - [ansible.builtin.fail](#ansiblebuiltinfail)
+        - [ansible.builtin.assert](#ansiblebuiltinassert)
+        - [ansible.builtin.meta](#ansiblebuiltinmeta)
+    - [Testing](#testing)
+        - [Molecule](#molecule)
+        - [ansible-test](#ansible-test)
+            - [sanity](#sanity)
+            - [units](#units)
+            - [coverage](#coverage)
+        - [Unit Tests](#unit-tests)
+        - [Testinfra](#testinfra)
 
 <!-- /TOC -->
 
@@ -835,7 +843,7 @@ ansible-doc -t strategy -l
 * [Utils](https://docs.ansible.com/ansible/latest/collections/ansible/utils/index.html)
 * [Windows](https://docs.ansible.com/ansible/latest/collections/ansible/windows/index.html)
 
-### ping
+### ansible.builtin.ping
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/ping_module.html
 
 * Executes a low-down and dirty command:
@@ -847,7 +855,7 @@ ansible-doc -t module ansible.builtin.ping
 ansible all -m ping
 ```
 
-### raw
+### ansible.builtin.raw
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/raw_module.html
 
 * Executes a low-down and dirty command:
@@ -859,7 +867,7 @@ ansible-doc -t module ansible.builtin.raw
 ansible all -i "127.0.0.1," -m raw -a "id -u"
 ```
 
-### shell
+### ansible.builtin.shell
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/shell_module.html
 
 * Execute shell commands on targets:
@@ -871,7 +879,7 @@ ansible-doc -t module ansible.builtin.shell
 ansible -i "127.0.0.1," all -m shell -a "getent passwd | egrep -w root"
 ```
 
-### async_status
+### ansible.builtin.async_status
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/async_status_module.html
 
 * Obtain status of asynchronous task:
@@ -893,7 +901,7 @@ ansible -i "127.0.0.1," all -m shell -a "getent passwd | egrep -w root"
   delay: 10
 ```
 
-### setup
+### module ansible.builtin.setup
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/setup_module.html
 
 * Gathers facts about remote hosts:
@@ -907,7 +915,7 @@ $ ansible all -m setup -a 'filter=*ip*'
 $ ansible all -m setup -a 'gather_subset=default_ipv4'
 ```
 
-### gateher_facts
+### ansible.builtin.gather_facts
 ```shell
 ansible-doc -t module ansible.builtin.setup
 ```
@@ -918,7 +926,7 @@ ansible-doc -t module ansible.builtin.setup
 ansible all -m ansible.builtin.gather_facts --tree /tmp/facts/localhost
 ```
 
-### debug
+### ansible.builtin.debug
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/debug_module.html
 
 * Print statements during execution:
@@ -931,7 +939,7 @@ $ ansible all -m debug -a msg="'Hello {{ var1 }}'"
 $ ansible all -m debug -a var=var1
 ```
 
-### service
+### ansible.builtin.service
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/service_module.html
 
 * Manage services:
@@ -943,7 +951,7 @@ ansible-doc -t module ansible.builtin.service
 ansible all -m service -a "name=ssh state=started"
 ```
 
-### user
+### ansible.builtin.user
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/user_module.html
 
 * Manage user accounts:
@@ -955,7 +963,7 @@ ansible-doc -t module ansible.builtin.user
 ansible all -m user -a "'name=foo password={{ \'password\' | password_hash(\'sha512\') }}'"
 ```
 
-### group
+### ansible.builtin.group
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/group_module.html
 
 * Add or remove groups:
@@ -967,7 +975,7 @@ ansible-doc -t module ansible.builtin.group
 ansible all -m group -a "name=team state=present"
 ```
 
-### file
+### ansible.builtin.file
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html
 
 * Manage files and file properties:
@@ -979,7 +987,7 @@ ansible-doc -t module ansible.builtin.file
 ansible all -m file -a "dest=/opt/bmc.txt mode=755 owner=ec2-user"
 ```
 
-### stat
+### module ansible.builtin.stat
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/stat_module.html
 
 * Retrieve file or file system status:
@@ -991,7 +999,7 @@ ansible-doc -t module ansible.builtin.stat
 ansible all -m stat -a "path=/etc/passwd"
 ```
 
-### lineinfile
+### ansible.builtin.lineinfile
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/lineinfile_module.html#ansible-collections-ansible-builtin-lineinfile-module
 
 * Manage lines in text files:
@@ -1014,7 +1022,7 @@ ansible all -m ansible.builtin.lineinfile -C -D -a 'dest=/etc/passwd regexp="^ro
     mode: 0400
 ```
 
-### blockinfile
+### ansible.builtin.blockinfile
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/blockinfile_module.html
 
 * Insert/update/remove a text block surrounded by marker lines
@@ -1036,7 +1044,7 @@ ansible all -m ansible.builtin.lineinfile -C -D -a 'dest=/etc/passwd regexp="^ro
     validate: /usr/sbin/sshd -T -f %s
 ```
 
-### template
+### module ansible.builtin.template
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/template_module.html
 
 Additional variables listed below can be used in templates:
@@ -1067,7 +1075,7 @@ ansible-doc -t module ansible.builtin.template
   notify: UP interface ib0
 ```
 
-### synchronize
+### ansible.posix.synchronize
 * https://docs.ansible.com/ansible/latest/collections/ansible/posix/synchronize_module.html
 
 * A wrapper around rsync to make common tasks in your playbooks quick and easy:
@@ -1101,7 +1109,7 @@ ansible-doc -t module ansible.posix.synchronize
   delegate_to: delegate.host
 ```
 
-### copy
+### ansible.builtin.copy
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html
 
 * Copy files to remote locations:
@@ -1113,7 +1121,7 @@ ansible-doc -t module ansible.builtin.copy
 ansible all -m copy -a 'src=/tmp/src.txt dest=/tmp/dest.txt'
 ```
 
-### fetch
+### ansible.builtin.fetch
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/fetch_module.html
 
 * Fetch files from remote nodes:
@@ -1125,7 +1133,7 @@ ansible-doc -t module ansible.builtin.fetch
 ansible all -m fetch -a 'src=/tmp/src.txt dest=/tmp/dest.txt'
 ```
 
-### reboot
+### ansible.builtin.reboot
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/reboot_module.html
 * [Youtube Xavki](https://www.youtube.com/watch?v=SRD2h5Fh4fA&list=PLn6POgpklwWoCpLKOSw3mXCqbRocnhrh-&index=20)
 
@@ -1138,7 +1146,7 @@ ansible-doc -t module ansible.builtin.reboot
 ansible all -m reboot -a "reboot_timeout=3600"
 ```
 
-### include_vars
+### ansible.builtin.include_vars
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/include_vars_module.html
 
 * Load variables from files, dynamically within a task:
@@ -1190,7 +1198,7 @@ ansible-doc -t module ansible.builtin.include_vars
     path: "{{ [role_path, 'vars'] | path_join }}"
 ```
 
-### authorized_key
+### ansible.posix.authorized_key
 * https://docs.ansible.com/ansible/latest/collections/ansible/posix/authorized_key_module.html
 
 * Adds or removes an SSH authorized key:
@@ -1207,7 +1215,7 @@ ansible-doc -t module ansible.posix.authorized_key
     key_options: 'no-port-forwarding,from="10.0.1.1"'
 ```
 
-### expect
+### ansible.builtin.expect
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/expect_module.html
 
 * Executes a command and responds to prompts:
@@ -1225,7 +1233,7 @@ ansible-doc -t module ansible.builtin.expect module
   no_log: true
 ```
 
-### fail
+### ansible.builtin.fail
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/fail_module.html#ansible-collections-ansible-builtin-fail-module
 
 * Fail with custom message:
@@ -1237,7 +1245,7 @@ ansible-doc -t module ansible.builtin.fail
 ansible all -m ansible.builtin.fail -a "msg='Oops!'"
 ```
 
-### assert
+### ansible.builtin.assert
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/assert_module.html
 
 * Asserts given expressions are true:
@@ -1276,7 +1284,7 @@ $ ansible all -m assert -a "that='\'test\' == \'test\'' fail_msg='OMG' success_m
     - authselect integrity check passed
 ```
 
-### meta
+### ansible.builtin.meta
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/meta_module.html#parameter-free_form
 
 * Execute Ansible **actions**:
