@@ -68,8 +68,8 @@
       when: item.when
       changed_when: echo.stdout != "1000"
       loop:
-        - {cmd: "id -u", when: true}
-        - {cmd: "id -a", when: false}
+        - { cmd: "id -u", when: true }
+        - { cmd: "id -a", when: false }
 
     - name: Async (without timeout)
       ansible.builtin.command:
