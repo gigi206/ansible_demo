@@ -11,7 +11,7 @@
 
 - name: Demo playbook
   # https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html
-  hosts: all
+  hosts: localhost
   # strategy: ansible.builtin.free # (incompatible with run_once)
   strategy: ansible.builtin.host_pinned # (incompatible with run_once)
   # remote_user: vagrant
