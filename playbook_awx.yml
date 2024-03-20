@@ -2,6 +2,17 @@
   hosts: '{{ target | default("all") }}'
   roles:
     - demo
+    - role: myapp
+      vars:
+        myapp_myvar: test from role
+    - role: gigix.demo.myapp
+      vars:
+        myapp_myvar: test from collection
+
+  tasks:
+    - name: Display ansible version
+      ansible.builtin.debug:
+        msg: "{{ lookup('ansible_version') }}"
 
 - name: Demo playbook
   # https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html
@@ -56,8 +67,8 @@
       when: item.when
       changed_when: echo.stdout != "1000"
       loop:
-        - {cmd: "id -u", when: true}
-        - {cmd: "id -a", when: false}
+        - { cmd: "id -u", when: true }
+        - { cmd: "id -a", when: false }
 
     - name: Async (without timeout)
       ansible.builtin.command:
