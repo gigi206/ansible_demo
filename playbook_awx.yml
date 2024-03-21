@@ -14,6 +14,10 @@
       ansible.builtin.debug:
         # msg: "{{ lookup('users', 'root').pw_shell }}"
         msg: "{{ lookup('users', 'root', attribute='pw_shell') }}"
+    - name: Test custom module hello_world
+      hello_world:
+        name: "fail me"
+      ignore_errors: true
 
 - name: Demo playbook
   # https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html
