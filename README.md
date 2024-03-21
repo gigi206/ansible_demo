@@ -8,6 +8,7 @@
     - [Installation](#installation)
     - [Version](#version)
     - [Development](#development)
+    - [Plugins](#plugins)
     - [SSH](#ssh)
         - [Copy key](#copy-key)
         - [Agent](#agent)
@@ -120,6 +121,9 @@ ansible [core 2.15.6]
 * [Developing plugins](https://docs.ansible.com/ansible/latest/dev_guide/developing_plugins.html#developing-plugins)
 * [Developing dynamic inventory](https://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html#developing-inventory)
 * [Developing modules](https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general.html#developing-modules-general)
+
+## Plugins
+* [Working with plugins](https://docs.ansible.com/ansible/latest/plugins/plugins.html)
 
 ## SSH
 
