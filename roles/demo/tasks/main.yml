@@ -38,5 +38,8 @@
 
     - name: Install demo app
       # ansible.builtin.include_tasks: "{{ role_path }}/tasks/install/demo.yml"
-      ansible.builtin.include_tasks: "install/demo.yml"
-      tags: demo_install_demo_app
+      ansible.builtin.include_tasks:
+        file: install/demo.yml
+        apply:
+          tags:
+            - demo_install_demo_app
