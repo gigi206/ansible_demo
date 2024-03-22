@@ -7,3 +7,4 @@ demo_run_demo: true
 demo_run_command_from_demo_role: true
 demo_run_hello_from_the_demo_role: true
 demo_run_test_condition_from_demo_role: false
+demo_variable: "{{ undef(hint='Please provide a demo variable') }}"

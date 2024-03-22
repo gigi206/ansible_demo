@@ -36,6 +36,7 @@
     - [Variables](#variables)
         - [Special variables](#special-variables)
             - [omit](#omit)
+            - [undef](#undef)
     - [Loop](#loop)
     - [Query / Lookup](#query--lookup)
     - [Conditions](#conditions)
@@ -553,6 +554,37 @@ id: "{{ omit if openstack_networks.id is not defined else openstack_networks.id 
     - path: /tmp/bar
     - path: /tmp/baz
       mode: "0444"
+```
+
+#### undef
+The `undef` filter is a convenient way, for example for a role, to ask the user to define a variable upstream.
+This example will fail if `demo_variable` is undefined.
+```yaml
+demo_variable: "{{ undef(hint='Please provide a demo variable') }}"
+```
+
+If `demo_variable` is not defined, it fails:
+```
+$ ansible-playbook playbook.yml
+...
+fatal: [localhost]: FAILED! =>
+  msg: |-
+    The task includes an option with an undefined variable. The error was: {{ undef(hint='Please provide a demo variable') }}: Please provide a demo variable. Please provide a demo variable. {{ undef(hint='Please provide a demo variable') }}: Please provide a demo variable. Please provide a demo variable
+
+    The error appears to be in '/home/gigi/Documents/python/ansible/roles/demo/tasks/main.yml': line 34, column 7, but may
+    be elsewhere in the file depending on the exact syntax problem.
+
+    The offending line appears to be:
+
+
+        - name: test
+          ^ here
+...
+```
+
+To success you need to pass the variable in inventory, group_vars, etc...:
+```shell
+ansible-playbook playbook.yml -e demo_variable=gigix
 ```
 
 ## Loop

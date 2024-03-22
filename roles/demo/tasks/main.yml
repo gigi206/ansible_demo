@@ -31,6 +31,11 @@
       when:
         - demo_run_test_condition_from_demo_role | bool
 
+    - name: test
+      ansible.builtin.debug:
+        msg: "{{ demo_variable }}"
+      ignore_errors: true
+
     - name: Install demo app
       # ansible.builtin.include_tasks: "{{ role_path }}/tasks/install/demo.yml"
       ansible.builtin.include_tasks: "install/demo.yml"
