@@ -313,8 +313,8 @@ Is it also possible to force a custom directory:
 ```shell
 $ ansible-inventory --list
 $ ansible-inventory --list --yaml
-$ ansible-inventory --list --graph
-$ ansible-inventory --list --graph --vars
+$ ansible-inventory --graph
+$ ansible-inventory --graph --vars
 ```
 
 ### ansible-playbook
