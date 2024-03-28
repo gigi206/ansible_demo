@@ -1,8 +1,9 @@
 {
     "recommendations": [
-        "redhat.ansible",
         "bageren.vault-editor",
-        "wolfmah.ansible-vault-inline",
         "esbenp.prettier-vscode",
+        "foxundermoon.shell-format",
+        "redhat.ansible",
+        "wolfmah.ansible-vault-inline",
     ]
 }
