@@ -16,6 +16,7 @@
         - [Environment variables](#environment-variables)
     - [Custom facts](#custom-facts)
     - [Cli](#cli)
+        - [ansible](#ansible)
         - [ansible-inventory](#ansible-inventory)
         - [ansible-playbook](#ansible-playbook)
         - [ansible-config](#ansible-config)
@@ -25,7 +26,6 @@
             - [Generate configuration file](#generate-configuration-file)
         - [ansible-pull](#ansible-pull)
         - [ansible-doc](#ansible-doc)
-        - [ansible](#ansible)
         - [ansible-galaxy](#ansible-galaxy)
         - [ansible-vault](#ansible-vault)
             - [ansible-vault simple](#ansible-vault-simple)
@@ -308,6 +308,26 @@ Is it also possible to force a custom directory:
 
 ## Cli
 
+### ansible
+* Examples:
+```shell
+$ ansible all --ssh-extra-args="-o 'PreferredAuthentications=password'" -m ping
+$ ansible -i "127.0.0.1," all -k -K -b -m raw -a "id -u" -o
+$ ansible -i "127.0.0.1," all -e "who=world" -m debug -a msg="'Hello {{ who }}'"
+$ ansible -i "127.0.0.1," all -m command -a "uptime"
+$ ansible -i "127.0.0.1," all -m shell -a "getent passwd | egrep -w root"
+```
+
+* Debugging Ansible:
+```shell
+ANSIBLE_DEBUG=1 ansible all -m ping
+```
+
+* Add verbosity (add more `v` to have more verbosity):
+```shell
+ansible all -vvv -m ping
+```
+
 ### ansible-inventory
 * [Documentation](https://docs.ansible.com/ansible/latest/cli/ansible-inventory.html):
 ```shell
@@ -380,15 +400,6 @@ ansible-doc -t callback ansible.posix.json
 * Use `ANSIBLE_STDOUT_CALLBACK` env var to change the callback for the playbook:
 ```shell
 ANSIBLE_STDOUT_CALLBACK=ansible.posix.json ansible-playbook playbook.yml
-```
-
-### ansible
-```shell
-$ ansible all --ssh-extra-args="-o 'PreferredAuthentications=password'" -m ping
-$ ansible -i "127.0.0.1," all -k -K -b -m raw -a "id -u" -o
-$ ansible -i "127.0.0.1," all -e "who=world" -m debug -a msg="'Hello {{ who }}'"
-$ ansible -i "127.0.0.1," all -m command -a "uptime"
-$ ansible -i "127.0.0.1," all -m shell -a "getent passwd | egrep -w root"
 ```
 
 ### ansible-galaxy
