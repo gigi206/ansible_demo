@@ -8,7 +8,6 @@
     #   ansible.builtin.include_tasks: "{{ role_path }}/tasks/install/demo.yml"
     #   tags: demo_install_demo_app
 
-
     - name: Merge all file vars found
       ansible.builtin.include_vars: "{{ item }}"
       loop:
@@ -20,17 +19,15 @@
       vars:
         path: "{{ [role_path, 'vars'] | path_join }}"
 
-
     - name: Override variables from OS-specific configuration
       ansible.builtin.set_fact:
         packages: "{{ myapp_packages | default(packages, true) }}"
-
 
     - name: Install all requirements packages
       ansible.builtin.package:
         name: "{{ packages }}"
         state: present
-
+      become: true
 
     # - name: Extract foo.tgz into /var/lib/foo
     #   ansible.builtin.unarchive:
@@ -48,11 +45,9 @@
     #     enabled: yes
     #     state: started
 
-
     - name: Debugging
       ansible.builtin.debug:
         var: packages
-
 
     - name: Debugging2
       ansible.builtin.debug:
