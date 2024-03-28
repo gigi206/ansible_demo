@@ -318,6 +318,18 @@ $ ansible -i "127.0.0.1," all -m command -a "uptime"
 $ ansible -i "127.0.0.1," all -m shell -a "getent passwd | egrep -w root"
 ```
 
+* Filter by host or group ([targeting](https://docs.ansible.com/ansible/latest/inventory_guide/intro_patterns.html)):
+```shell
+# target group1
+ansible all -m ping -l group1
+# target gigi-debian-1 and gigi-debian-3
+ansible all -m ping -l 'gigi-debian-[1-3:]'
+# target gigi-debian-1, gigi-debian-2 and gigi-debian-3
+ansible all -m ping -l 'gigi-debian-[1:3:]'
+# target group1 and gigi-debian-1
+ansible all -m ping -l group1,gigi-debian-1
+```
+
 * Debugging Ansible:
 ```shell
 ANSIBLE_DEBUG=1 ansible all -m ping
