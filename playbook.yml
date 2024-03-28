@@ -20,6 +20,10 @@
         name: "fail me"
       ignore_errors: true
 
+    - name: Test custom filter
+      ansible.builtin.debug:
+        msg: "{{ 'some text' | mycustomfilter(surround='oOo') }}"
+
 - name: Demo playbook
   # https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html
   hosts: localhost
