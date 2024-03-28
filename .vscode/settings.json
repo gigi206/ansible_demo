@@ -1,5 +1,6 @@
 {
     "ansible.python.interpreterPath": "/home/gigi/Documents/python/ansible/env/bin/python",
+    "ansible.python.activationScript": "./env.sh",
     "editor.defaultFoldingRangeProvider": "redhat.ansible",
     "editor.defaultFormatter": "redhat.ansible",
     "vaultEditor.decryptOnOpen":false,
@@ -10,5 +11,4 @@
     "[yaml]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "ansible.python.activationScript": "./env.sh"
 }
