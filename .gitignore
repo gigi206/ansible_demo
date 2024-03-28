@@ -1,3 +1,4 @@
 /env
 /fact_caching
 __pycache__
+00_inventory.yml
