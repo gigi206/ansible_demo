@@ -42,6 +42,8 @@
     - [Query / Lookup](#query--lookup)
     - [Conditions](#conditions)
     - [Error handling in playbooks](#error-handling-in-playbooks)
+    - [Check mode](#check-mode)
+    - [Diff mode](#diff-mode)
     - [Block](#block)
     - [Timeout](#timeout)
     - [Strategy](#strategy)
@@ -897,6 +899,53 @@ ignore_unreachable: true
 ```
 
 * [Setting a maximum failure percentage](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_error_handling.html#setting-a-maximum-failure-percentage)
+
+## Check mode
+* [playbooks_checkmode](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_checkmode.html)
+
+To enable **check mode** `ansible-playbook foo.yml --check` or `ansible-playbook foo.yml -C`.
+
+```yaml
+- name: This task will always make changes to the system
+  ansible.builtin.command: /something/to/run --even-in-check-mode
+  check_mode: false
+
+- name: This task will never make changes to the system
+  ansible.builtin.lineinfile:
+    line: "important config"
+    dest: /path/to/myconfig.conf
+    state: present
+  check_mode: true
+  register: changes_to_important_config
+
+- name: This task will be skipped in check mode
+  ansible.builtin.git:
+    repo: ssh://git@github.com/mylogin/hello.git
+    dest: /home/mylogin/hello
+  when: not ansible_check_mode
+
+- name: This task will ignore errors in check mode
+  ansible.builtin.git:
+    repo: ssh://git@github.com/mylogin/hello.git
+    dest: /home/mylogin/hello
+  ignore_errors: "{{ ansible_check_mode }}"
+```
+
+## Diff mode
+* [diff mode](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_checkmode.html#using-diff-mode)
+
+To enable **check mode** `ansible-playbook foo.yml --diff` or `ansible-playbook foo.yml -D`.
+
+```yaml
+- name: This task will not report a diff when the file changes
+  ansible.builtin.template:
+    src: secret.conf.j2
+    dest: /etc/secret.conf
+    owner: root
+    group: root
+    mode: '0600'
+  diff: false
+```
 
 ## Block
 * https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_blocks.html
