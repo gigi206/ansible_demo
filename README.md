@@ -48,6 +48,12 @@
     - [Timeout](#timeout)
     - [Strategy](#strategy)
     - [Filters](#filters)
+        - [select / reject](#select--reject)
+        - [selectattr / rejectattr](#selectattr--rejectattr)
+        - [sort](#sort)
+        - [map](#map)
+        - [ansible.builtin.flatten](#ansiblebuiltinflatten)
+        - [ansible.builtin.ternary](#ansiblebuiltinternary)
         - [community.general.groupby_as_dict](#communitygeneralgroupby_as_dict)
     - [Custom module](#custom-module)
     - [Modules](#modules)
@@ -1008,9 +1014,135 @@ ansible-doc -t strategy -l
 
 ## Filters
 * [Documentation](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_filters.html)
-* [List of filters](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/#filter-plugins)
+* [List of Ansible filters](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/#filter-plugins)
+* [List of Jinja2 filters](https://jinja.palletsprojects.com/en/latest/templates/#list-of-builtin-filters)
+* [Manipulating data](https://docs.ansible.com/ansible/latest/playbook_guide/complex_data_manipulation.html)
+
+Some Jinja2 filter can be used with  tests functions:
+* [boolean](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.boolean)`(value: Any) → bool`: return `true` if the object is a boolean value
+* [callable](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.callable)`(obj, /)`: return whether the object is callable (i.e., some kind of function). Note that classes are callable, as are instances of classes with a `__call__()` method.
+* [defined](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.defined)`(value: Any) → bool`: return `true` if the variable is defined.
+* [divisibleby](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.divisibleby)`(value: int, num: int) → bool`: check if a variable is divisible by a number.
+* [eq | == | equalto](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.eq)`(a, b, /)`: same as `a == b`.
+* [escaped](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.escaped)`(value: Any) → bool`: check if the value is escaped.
+* [even](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.even)`(value: int) → bool`: return `true` if the variable is even.
+* [false](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.false)`(value: Any) → bool`: return `true` if the object is False.
+* [filter](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.filter)`(value: str) → bool`: check if a filter exists by name. Useful if a filter may be optionally available.
+* [float](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.float)`(value: Any) → bool`: return `true` if the object is a float.
+* [ge | >=](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.ge)`(a, b, /)`: same as `a >= b`.
+* [gt | > | greaterthan](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.gt)`(a, b, /)`: same as `a > b`.
+* [in](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.in)`(value: Any, seq: Container[Any]) → bool`: check if value is in seq.
+* [integer](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.integer)`(value: Any) → bool`: return `true` if the object is an integer.
+* [iterable](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.iterable)`(value: Any) → bool`: check if it’s possible to iterate over an object.
+* [le | <=](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.le)`(a, b, /)`: same as `a <= b`.
+* [lower](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.lower)`(value: str) → bool`: return `true` if the variable is lowercased.
+* [lt | < | lessthan](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.lt)`(a, b, /)`: same as `a < b`.
+* [mapping](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.mapping)`(value: Any) → bool`: return `true` if the object is a mapping (dict etc.).
+* [ne | !=](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.ne)`(a, b, /)`: same as `a != b`.
+* [none](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.none)`(value: Any) → bool`: return `true` if the variable is none.
+* [number](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.number)`(value: Any) → bool`: return `true` if the variable is a number.
+* [odd](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.odd)`(value: int) → bool`: return `true` if the variable is odd.
+* [sameas](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.sameas)`(value: Any, other: Any) → bool`: check if an object points to the same memory address than another object.
+* [sequence](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.sequence)`(value: Any) → bool`: return `true` if the variable is a sequence. Sequences are variables that are iterable.
+* [string](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.string)`(value: Any) → bool`: return `true` if the object is a string.
+* [test](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.test)`(value: str) → bool`: check if a test exists by name. Useful if a test may be optionally available.
+* [true](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.true)`(value: Any) → bool`: return `true` if the object is `True`.
+* [undefined](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.undefined)`(value: Any) → bool`: like `defined()` but the other way round
+* [upper](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.upper)`(value: str) → bool`: return `true` if the variable is uppercased.
+
+### select / reject
+* https://jinja.palletsprojects.com/en/latest/templates/#list-of-builtin-tests
+
+Filter `select` can be used with a [test function](https://jinja.palletsprojects.com/en/latest/templates/#list-of-builtin-tests).
+
+```s
+{{ numbers | select("odd") }}
+{{ numbers | select("divisibleby", 3) }}
+{{ numbers | select("lessthan", 42) }}
+{{ strings | select("equalto", "mystring") }}
+```
+
+```shell
+$ ansible -i "127.0.0.1," all -c local -m debug -a msg="{{ range(1, 10, 4) | select('odd') }}"
+$ ansible -i "127.0.0.1," all -c local -e myvar="[1,2,3]" -m debug -a msg="{{ map('int') | reject('even') }}"
+```
+
+### selectattr / rejectattr
+* https://jinja.palletsprojects.com/en/latest/templates/#jinja-filters.selectattr
+
+Filter `selectattr` can be used with a [test function](https://jinja.palletsprojects.com/en/latest/templates/#list-of-builtin-tests).
+
+```s
+{{ _cmd.results | selectattr('rc', 'defined') | selectattr('rc', '==', 0) | map(attribute='stdout') | last }}
+```
+
+```shell
+$ ansible -i "127.0.0.1," all -c local -m debug -a msg="{{ [{'key1':'val1', 'key2': 'val2'}, {'key1':'val1', 'key3': 'val3'}] | rejectattr('key1') }}"
+$ ansible -i "127.0.0.1," all -c local -m debug -a msg="{{ [{'key1':'val1', 'key2': 'val2'}, {'key1':'val1', 'key3': 'val3'}] | selectattr('key2', 'undefined') }}"
+```
+
+### sort
+* https://jinja.palletsprojects.com/en/latest/templates/#jinja-filters.sort
+
+```s
+{{ (ansible_facts.mounts | selectattr('mount', 'in', path) | list | sort(attribute='mount'))[-1]['mount'] }}
+```
+
+### map
+* https://jinja.palletsprojects.com/en/latest/templates/#jinja-filters.map
+
+```s
+{{ users | map(attribute='username') | join(', ') }}
+```
+
+```shell
+ansible -i "127.0.0.1," all -c local -e myvar="[1,2,3]" -m debug -a msg="{{ myvar | map('int') | select('odd') }}"
+```
+
+### ansible.builtin.flatten
+* https://docs.ansible.com/ansible/latest/collections/ansible/builtin/flatten_filter.html
+
+```yaml
+- name: Show extracted list of keys from a list of dictionaries
+  ansible.builtin.debug:
+    msg: "{{ chains | map('extract', chains_config) | map(attribute='configs') | flatten | map(attribute='type') | flatten | unique }}"
+  vars:
+    chains: [1, 2]
+    chains_config:
+        1:
+            foo: bar
+            configs:
+                - type: routed
+                  version: 0.1
+                - type: bridged
+                  version: 0.2
+        2:
+            foo: baz
+            configs:
+                - type: routed
+                  version: 1.0
+                - type: bridged
+                  version: 1.1
+```
+
+### ansible.builtin.ternary
+* https://docs.ansible.com/ansible/latest/collections/ansible/builtin/ternary_filter.html
+
+```yaml
+- name: Enable a list of Windows features, by name
+  ansible.builtin.set_fact:
+    win_feature_list: "{{ namestuff | reject('equalto', omit) | list }}"
+  vars:
+    namestuff:
+      - "{{ (fs_installed_smb_v1 | default(False)) | ternary(omit, 'FS-SMB1') }}"
+      - "foo"
+      - "bar"
+```
 
 ### community.general.groupby_as_dict
+* https://docs.ansible.com/ansible/latest/collections/community/general/groupby_as_dict_filter.html
+* https://docs.ansible.com/ansible/latest/collections/community/general/docsite/filter_guide_abstract_informations_grouping.html
+
 ```yaml
 - name: Output mount facts grouped by device name
   ansible.builtin.debug:
