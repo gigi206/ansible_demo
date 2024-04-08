@@ -1640,3 +1640,101 @@ ansible all -m ansible.builtin.meta -a "refresh_inventory"
     - name: Ping all CentOS 6.3 hosts
       ansible.builtin.ping:
 ```
+
+## Testing
+### Molecule
+* [Documentation](https://ansible.readthedocs.io/projects/molecule/)
+* [Configuration molecule.yml](https://ansible.readthedocs.io/projects/molecule/configuration/)
+* [Example ansible modules to test with molecule](https://docs.ansible.com/ansible/latest/reference_appendices/test_strategies.html)
+
+* Initialize molecule:
+```yaml
+molecule init scenario
+molecule init scenario --verifier-name ansible --driver-name vagrant
+```
+
+* Files within `molecule/default`:
+* `create.yml` is a playbook file used for creating the instances and storing data in instance-config
+* `destroy.yml` has the Ansible code for destroying the instances and removing them from instance-config
+* `molecule.yml` is the central configuration entry point for Molecule per scenario. With this file, you can configure each tool that Molecule will employ when testing your role.
+`converge.yml` is the playbook file that contains the call for your role. Molecule will invoke this playbook with ansible-playbook and run it against an instance created by the driver.
+
+* [Example with Podman](https://ansible.readthedocs.io/projects/molecule/examples/podman/)
+* Example `molecule.yml` for **Vagrant**:
+```yaml
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+platforms:
+  - name: instance
+    box: generic/ubuntu2204
+    memory: 512
+    cpus: 1
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
+lint: |
+  yaml-lint
+```
+
+### ansible-test
+* [Documentation](https://docs.ansible.com/ansible/latest/dev_guide/testing.html)
+
+#### sanity
+```shell
+ansible-test sanity --test pep8
+```
+
+```shell
+# Run all sanity tests
+ansible-test sanity
+
+# Run all sanity tests against against certain files
+ansible-test sanity plugins/modules/files/eos_acls.py
+
+# Run all tests with a specific version of python (3.7 in this case)
+ansible-test sanity --python 3.7
+
+# Run all tests inside docker (good if you don't have dependencies installed)
+ansible-test sanity --docker default
+
+# Run validate-modules against a specific file
+ansible-test sanity --test validate-modules lib/ansible/modules/files/template.py
+```
+
+* To list all the sanity tests available:
+```shell
+ansible-test sanity --list-tests
+```
+
+#### units
+```shell
+# Run all tests inside docker (good if you don't have dependencies installed)
+ansible-test units --docker -v
+
+# Only runs if the module directory path and unit test file path are similar
+ansible-test units --docker -v apt
+
+# Or against a specific python version by doing:
+ansible-test units --docker -v --python 2.7 apt
+
+# If you are running unit tests against things other than modules, such as module utilities, specify the whole file path:
+ansible-test units --docker -v test/units/module_utils/basic/test_imports.py
+```
+
+#### coverage
+```shell
+ansible-test coverage erase
+ansible-test units --coverage apt
+ansible-test coverage html
+```
+
+### Unit Tests
+* [Documentation](https://docs.ansible.com/ansible/latest/dev_guide/testing_units.html)
+
+### Testinfra
+* [Documentation](https://testinfra.readthedocs.io/en/latest/)
+* [Tuto](https://blog.stephane-robert.info/post/ansible-test-infra-playbook/)

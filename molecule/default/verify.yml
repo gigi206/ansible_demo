@@ -1,0 +1,15 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Gather package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Verify Packages
+      ansible.builtin.assert:
+        that: "'{{ item }}' in ansible_facts.packages.keys()"
+        fail_msg: "'{{ item }}' package is not installed"
+        success_msg: "'{{ item }}' package is installed"
+      loop:
+        - openssl
