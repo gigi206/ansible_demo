@@ -27,10 +27,18 @@
         - [ansible-pull](#ansible-pull)
         - [ansible-doc](#ansible-doc)
         - [ansible-galaxy](#ansible-galaxy)
+        - [ansible-console](#ansible-console)
         - [ansible-vault](#ansible-vault)
             - [ansible-vault simple](#ansible-vault-simple)
             - [ansible-vault multi-password](#ansible-vault-multi-password)
         - [ansible-lint](#ansible-lint)
+    - [Special attributes](#special-attributes)
+        - [Delegation](#delegation)
+            - [Local playbook](#local-playbook)
+            - [Delegate to a remote host](#delegate-to-a-remote-host)
+            - [Delegate facts](#delegate-facts)
+            - [Run locally](#run-locally)
+        - [Only run once time](#only-run-once-time)
     - [Import / Include](#import--include)
     - [Roles](#roles)
     - [Collections](#collections)
@@ -315,8 +323,11 @@ Is it also possible to force a custom directory:
 ```
 
 ## Cli
+* https://docs.ansible.com/ansible/latest/command_guide/command_line_tools.html
 
 ### ansible
+* [Cli](https://docs.ansible.com/ansible/latest/cli/ansible.html)
+
 * Examples:
 ```shell
 $ ansible all --ssh-extra-args="-o 'PreferredAuthentications=password'" -m ping
@@ -349,7 +360,8 @@ ansible all -vvv -m ping
 ```
 
 ### ansible-inventory
-* [Documentation](https://docs.ansible.com/ansible/latest/cli/ansible-inventory.html):
+* [Cli](https://docs.ansible.com/ansible/latest/cli/ansible-inventory.html)
+* Examples:
 ```shell
 $ ansible-inventory --list
 $ ansible-inventory --list --yaml
@@ -358,9 +370,10 @@ $ ansible-inventory --graph --vars
 ```
 
 ### ansible-playbook
-* [Keywords](https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html)
+* [Cli](https://docs.ansible.com/ansible/latest/cli/ansible-playbook.html)
 
 ### ansible-config
+* [Cli](https://docs.ansible.com/ansible/latest/cli/ansible-config.html)
 * [Documentation location files](https://docs.ansible.com/ansible/latest/reference_appendices/config.html)
 
 * `ANSIBLE_CONFIG`: environment variable if set
@@ -401,10 +414,12 @@ $ ansible-config init -t shell --disabled > ansible.cfg
 ```
 
 ### ansible-pull
-* [Documentation](https://docs.ansible.com/ansible/latest/cli/ansible-pull.html)
+* [Cli](https://docs.ansible.com/ansible/latest/cli/ansible-pull.html)
 * [Example](https://github.com/jktr/ansible-pull-example)
 
 ### ansible-doc
+* [Cli](https://docs.ansible.com/ansible/latest/cli/ansible-doc.html)
+
 * List all callback
 ```shell
 $ ansible-doc -t callback -l
@@ -436,6 +451,8 @@ ansible-galaxy init myrole
 ```shell
 ansible-galaxy install --roles-path roles -r requirements.yml
 ```
+### ansible-console
+* [Cli](https://docs.ansible.com/ansible/latest/cli/ansible-console.html)
 
 ### ansible-vault
 #### ansible-vault simple
@@ -483,6 +500,76 @@ ansible-vault create --vault-id prod@mypasswd_file.txt prod-secrets.yml
 
 ### ansible-lint
 * [Documentation](https://ansible.readthedocs.io/projects/lint/)
+
+## Special attributes
+* [Keywords](https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html)
+  * [Special keywords for a playbook](https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html#play)
+  * [Special keywords for a role](https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html#role)
+  * [Special keywords for a block](https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html#block)
+  * [Special keywords for a task](https://docs.ansible.com/ansible/latest/reference_appendices/playbooks_keywords.html#task)
+
+### Delegation
+* [Documentation](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_delegation.html)
+
+#### Local playbook
+* [Documentation local playbook](https://docs.ansible.com/ansible/2.9/user_guide/playbooks_delegation.html#local-playbooks)
+```yaml
+- hosts: 127.0.0.1
+  connection: local
+```
+
+Or from the cli:
+```shell
+ansible-playbook playbook.yml --connection=local
+ansible-playbook playbook.yml -c local
+```
+
+#### Delegate to a remote host
+```yaml
+- name:
+    ansible.builtin.command:
+      cmd: hostname
+    delegate_to: remote_host
+```
+
+#### Delegate facts
+* [Documentation delegate_facts](https://docs.ansible.com/ansible/2.9/user_guide/playbooks_delegation.html#delegated-facts)
+
+By default, any fact gathered by a delegated task are assigned to the inventory_hostname (the current host) instead of the host which actually produced the facts (the delegated to host). The directive delegate_facts may be set to True to assign the task’s gathered facts to the delegated host instead of the current one.:
+
+```yaml
+- hosts: app_servers
+  tasks:
+    - name: gather facts from db servers
+      setup:
+      delegate_to: "{{ item }}"
+      delegate_facts: True
+      loop: "{{ groups['dbservers'] }}"
+```
+
+The above will gather facts for the machines in the **dbservers** group and assign the facts to those machines and not to **app_servers**. This way you can lookup `hostvars[‘dbhost1’][‘ansible_default_ipv4’][‘address’]` even though **dbservers** were not part of the play, or left out by using `–limit`.
+
+#### Run locally
+```yaml
+- name: Local action
+  local_action:
+    module: ansible.builtin.command
+    cmd: hostname
+```
+
+### Only run once time
+* [Documentation run_once](https://docs.ansible.com/ansible/2.9/user_guide/playbooks_delegation.html#run-once)
+
+```yaml
+- name: Send summary mail
+  local_action:
+    module: community.general.mail
+    subject: "Summary Mail"
+    to: "{{ mail_recipient }}"
+    body: "{{ mail_body }}"
+  run_once: True
+```
+
 
 ## Import / Include
 * Compare:
