@@ -1614,7 +1614,6 @@ ansible-doc -t module ansible.builtin.include_vars
     - "{{ ansible_distribution }}/main.yml"
     - "{{ ansible_distribution }}/{{ ansible_distribution_major_version }}/main.yml"
     - "{{ ansible_distribution }}/{{ ansible_distribution_major_version }}/{{ ansible_distribution_version }}.yml"
-    - "{{ ansible_distribution }}/{{ ansible_distribution_major_version }}/{{ ansible_distribution_version }}.yml"
     - "{{ role_path }}/defaults/main.yml"
   when:
     - item.startswith('/') | ternary(item, [path, item] | path_join) in query("community.general.filetree", item.startswith('/') | ternary(item | dirname, path)) | selectattr("state", "in", "file") | map(attribute="src") | list
