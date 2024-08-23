@@ -6,5 +6,5 @@ all:
       # ansible_port: 22
       # ansible_user: root
       ansible_connection: local
-      ansible_python_interpreter: /usr/bin/env python3
+      #ansible_python_interpreter: /usr/bin/env python3
 ungrouped:
