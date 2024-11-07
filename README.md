@@ -48,6 +48,8 @@
             - [undef](#undef)
     - [Loop](#loop)
     - [Query / Lookup](#query--lookup)
+        - [community.general.merge_variables](#communitygeneralmerge_variables)
+        - [ansible.builtin.subelements lookup](#ansiblebuiltinsubelements-lookup)
     - [Conditions](#conditions)
     - [Error handling in playbooks](#error-handling-in-playbooks)
     - [Check mode](#check-mode)
@@ -60,6 +62,8 @@
         - [selectattr / rejectattr](#selectattr--rejectattr)
         - [sort](#sort)
         - [map](#map)
+        - [community.general.lists_mergeby](#communitygenerallists_mergeby)
+        - [ansible.builtin.combine](#ansiblebuiltincombine)
         - [ansible.builtin.flatten](#ansiblebuiltinflatten)
         - [ansible.builtin.ternary](#ansiblebuiltinternary)
         - [community.general.groupby_as_dict](#communitygeneralgroupby_as_dict)
@@ -850,10 +854,99 @@ loop_control:
 
 ## Query / Lookup
 * [Documentation](https://docs.ansible.com/ansible/latest/plugins/lookup.html)
+* Ansible lookup list:
+  * https://docs.ansible.com/ansible/latest/collections/index_lookup.html
+  * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/#lookup-plugins
+
+To list all lookups:
+```yaml
+ansible-doc -t lookup -l
+```
 
 ```yaml
 loop: "{{ query('inventory_hostnames', 'all') }}"
 loop: "{{ lookup('inventory_hostnames', 'all', wantlist=True) }}"
+```
+
+### community.general.merge_variables
+* https://docs.ansible.com/ansible/latest/collections/community/general/merge_variables_lookup.html
+
+Merge variables whose names match a given pattern:
+```yaml
+test_init_list:
+  - "list init item 1"
+  - "list init item 2"
+
+testa__test_list:
+  - "test a item 1"
+
+testb__test_list:
+  - "test b item 1"
+
+example_b: "{{ lookup('community.general.merge_variables', '^.+__test_list$', initial_value=test_init_list) }}"
+# The variable example_b now contains:
+#   - "list init item 1"
+#   - "list init item 2"
+#   - "test a item 1"
+#   - "test b item 1"
+```
+
+### ansible.builtin.subelements lookup
+* https://docs.ansible.com/ansible/latest/collections/ansible/builtin/subelements_lookup.html
+
+```yaml
+- name: show var structure as it is needed for example to make sense
+  hosts: all
+  vars:
+    users:
+      - name: alice
+        authorized:
+          - /tmp/alice/onekey.pub
+          - /tmp/alice/twokey.pub
+        mysql:
+            password: mysql-password
+            hosts:
+              - "%"
+              - "127.0.0.1"
+              - "::1"
+              - "localhost"
+            privs:
+              - "*.*:SELECT"
+              - "DB1.*:ALL"
+        groups:
+          - wheel
+      - name: bob
+        authorized:
+          - /tmp/bob/id_rsa.pub
+        mysql:
+            password: other-mysql-password
+            hosts:
+              - "db1"
+            privs:
+              - "*.*:SELECT"
+              - "DB2.*:ALL"
+  tasks:
+    - name: Set authorized ssh key, extracting just that data from 'users'
+      ansible.posix.authorized_key:
+        user: "{{ item.0.name }}"
+        key: "{{ lookup('file', item.1) }}"
+      with_subelements:
+         - "{{ users }}"
+         - authorized
+
+    - name: Setup MySQL users, given the mysql hosts and privs subkey lists
+      community.mysql.mysql_user:
+        name: "{{ item.0.name }}"
+        password: "{{ item.0.mysql.password }}"
+        host: "{{ item.1 }}"
+        priv: "{{ item.0.mysql.privs | join('/') }}"
+      with_subelements:
+        - "{{ users }}"
+        - mysql.hosts
+
+    - name: list groups for users that have them, don't error if groups key is missing
+      ansible.builtin.debug: var=item
+      loop: "{{ q('ansible.builtin.subelements', users, 'groups', {'skip_missing': True}) }}"
 ```
 
 ## Conditions
@@ -1101,7 +1194,9 @@ ansible-doc -t strategy -l
 
 ## Filters
 * [Documentation](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_filters.html)
-* [List of Ansible filters](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/#filter-plugins)
+* Ansible filters:
+  * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/#filter-plugins
+  * https://docs.ansible.com/ansible/latest/collections/index_filter.html
 * [List of Jinja2 filters](https://jinja.palletsprojects.com/en/latest/templates/#list-of-builtin-filters)
 * [Manipulating data](https://docs.ansible.com/ansible/latest/playbook_guide/complex_data_manipulation.html)
 
@@ -1136,6 +1231,11 @@ Some Jinja2 filter can be used with  tests functions:
 * [true](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.true)`(value: Any) → bool`: return `true` if the object is `True`.
 * [undefined](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.undefined)`(value: Any) → bool`: like `defined()` but the other way round
 * [upper](https://jinja.palletsprojects.com/en/latest/templates/#jinja-tests.upper)`(value: str) → bool`: return `true` if the variable is uppercased.
+
+To list all filters:
+```yaml
+ansible-doc -t filter -l
+```
 
 ### select / reject
 * https://jinja.palletsprojects.com/en/latest/templates/#list-of-builtin-tests
@@ -1185,6 +1285,46 @@ $ ansible -i "127.0.0.1," all -c local -m debug -a msg="{{ [{'key1':'val1', 'key
 ```shell
 ansible -i "127.0.0.1," all -c local -e myvar="[1,2,3]" -m debug -a msg="{{ myvar | map('int') | select('odd') }}"
 ```
+
+### community.general.lists_mergeby
+* https://docs.ansible.com/ansible/latest/collections/community/general/lists_mergeby_filter.html
+
+Merge two or more lists of dictionaries by a given attribute:
+```yaml
+- name: Example 7. Merge two lists. Merge nested dictionaries too.
+  ansible.builtin.debug:
+    var: r
+  vars:
+    list1:
+      - {index: a, foo: {x: 1, y: 2}}
+      - {index: b, foo: [X1, X2]}
+    list2:
+      - {index: a, foo: {y: 3, z: 4}}
+      - {index: b, foo: [Y1, Y2]}
+    r: "{{ [list1, list2] | community.general.lists_mergeby('index', recursive=true) }}"
+
+#  r:
+#    - {index: a, foo: {x:1, y: 3, z: 4}}
+#    - {index: b, foo: [Y1, Y2]}
+```
+
+### ansible.builtin.combine
+* https://docs.ansible.com/ansible/latest/collections/ansible/builtin/combine_filter.html
+
+Combine two dictionaries:
+
+```yaml
+# ab => {'a':1, 'b':3, 'c': 4}
+ab: {{ {'a':1, 'b':2} | ansible.builtin.combine({'b':3, 'c':4}) }}
+
+many: "{{ dict1 | ansible.builtin.combine(dict2, dict3, dict4) }}"
+
+# defaults => {'a':{'b':3, 'c':4}, 'd': 5}
+# customization => {'a':{'c':20}}
+# final => {'a':{'b':3, 'c':20}, 'd': 5}
+final: "{{ defaults | ansible.builtin.combine(customization, recursive=true) }}"
+```
+
 
 ### ansible.builtin.flatten
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/flatten_filter.html
@@ -1244,12 +1384,17 @@ ansible -i "127.0.0.1," all -c local -e myvar="[1,2,3]" -m debug -a msg="{{ myva
 * https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_general.html
 
 ## Modules
-* [All](https://docs.ansible.com/ansible/2.9/modules/list_of_all_modules.html)
+* [All modules](https://docs.ansible.com/ansible/latest/collections/index_module.html)
 * [Builtin](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/)
 * [Posix](https://docs.ansible.com/ansible/latest/collections/ansible/posix/)
 * [Netcommon](https://docs.ansible.com/ansible/latest/collections/ansible/netcommon/index.html)
 * [Utils](https://docs.ansible.com/ansible/latest/collections/ansible/utils/index.html)
 * [Windows](https://docs.ansible.com/ansible/latest/collections/ansible/windows/index.html)
+
+To list all modules:
+```yaml
+ansible-doc -t module -l
+```
 
 ### ansible.builtin.ping
 * https://docs.ansible.com/ansible/latest/collections/ansible/builtin/ping_module.html
