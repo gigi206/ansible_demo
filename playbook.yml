@@ -142,7 +142,7 @@
 
     - name: Do not count this as a failure
       ansible.builtin.command: /bin/false # noqa no-changed-when
-      ignore_errors: true
+      failed_when: false
 
     - name: Local action (run_once) # noqa: run-once[task]
       # local_action: command id -u
