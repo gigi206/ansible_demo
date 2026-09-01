@@ -75,7 +75,7 @@
 
     - name: Add the demo dict to the facts
       ansible.builtin.set_fact:
-        demo: "{{ demo | default({}) | ansible.builtin.combine({'demo': 'gigix'}) }}"
+        demo: "{{ ansible_facts['demo'] | default({}) | ansible.builtin.combine({'demo': 'gigix'}) }}"
         cacheable: true
 
   tasks:
