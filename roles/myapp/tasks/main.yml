@@ -11,9 +11,9 @@
     - name: Merge all file vars found
       ansible.builtin.include_vars: "{{ item }}"
       loop:
-        - "{{ ansible_distribution }}/main.yml"
-        - "{{ ansible_distribution }}/{{ ansible_distribution_major_version }}/main.yml"
-        - "{{ ansible_distribution }}/{{ ansible_distribution_major_version }}/{{ ansible_distribution_version }}.yml"
+        - "{{ ansible_facts['distribution'] }}/main.yml"
+        - "{{ ansible_facts['distribution'] }}/{{ ansible_facts['distribution_major_version'] }}/main.yml"
+        - "{{ ansible_facts['distribution'] }}/{{ ansible_facts['distribution_major_version'] }}/{{ ansible_facts['distribution_version'] }}.yml"
       when:
         - ([path, item] | path_join) in query("community.general.filetree", path) | selectattr("state", "in", "file") | map(attribute="src") | list
       vars:
